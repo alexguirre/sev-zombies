@@ -94,8 +94,8 @@ public:
 	list<ScoreFloatingText*> scoreFloatingTexts;
 
 	// Opciones de debug
-	bool debugShowBoundingBoxes;
-	bool debugShowPathFindingMap;
+	bool debugShowBoundingBoxes = false;
+	bool debugShowPathFindingMap = false;
 
 	// Controles
 	bool controlPause = false;

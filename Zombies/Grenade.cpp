@@ -14,6 +14,8 @@ Grenade::Grenade(float x, float y, float vx, float vy, int damage, int timeToExp
 
 	aExplosion = new Animation("res/grenade_explosion.png", 384, 384, 12 * 384, 384, 1, 12, false, game);
 	audioExplosion = game->getAudio("res/audio/grenade_explosion.wav", false);
+
+	shouldBeDeleted = false;
 }
 
 void Grenade::draw(float scrollX, float scrollY) {

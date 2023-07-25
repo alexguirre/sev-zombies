@@ -581,7 +581,7 @@ void GameLayer::loadMap(const string& name) {
 		}
 
 		pathFinding = new PathFinding(map, game);
-		pathFinding->updateTargetPosition(player->x / TILE_WIDTH, player->y / TILE_HEIGHT);
+		pathFinding->updateTargetPosition(player->x / (float)TILE_WIDTH, player->y / (float)TILE_HEIGHT);
 	}
 	streamFile.close();
 }
@@ -715,9 +715,9 @@ void GameLayer::showHelpText(const string& helpTextString) {
 
 void GameLayer::drawDebugBoundingBox(Actor* actor, int r, int g, int b) {
 	if (debugShowBoundingBoxes) {
-		SDL_Rect boundingBox;
-		boundingBox.x = actor->x - scrollX - actor->width / 2;
-		boundingBox.y = actor->y - scrollY - actor->height / 2;
+		SDL_Rect boundingBox{};
+		boundingBox.x = actor->x - scrollX - actor->width / 2.0f;
+		boundingBox.y = actor->y - scrollY - actor->height / 2.0f;
 		boundingBox.w = actor->width;
 		boundingBox.h = actor->height;
 		SDL_SetRenderDrawColor(game->renderer, r, g, b, 255);

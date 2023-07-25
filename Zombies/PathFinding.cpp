@@ -113,7 +113,7 @@ void PathFinding::getMoveTarget(float x, float y, float& outTargetX, float& outT
 	// buscar el offset con el menor coste
 	int minCost = -1, matchX, matchY;
 	int i = 0;
-	for (auto offset : offsets) {
+	for (auto& offset : offsets) {
 		int nextX = mapX + offset.x;
 		int nextY = mapY + offset.y;
 		if (isInsideMap(nextX, nextY)) {
@@ -140,7 +140,7 @@ void PathFinding::getMoveTarget(float x, float y, float& outTargetX, float& outT
 }
 
 void PathFinding::debugDraw(float scrollX, float scrollY) {
-	SDL_Rect cellBounds;
+	SDL_Rect cellBounds{};
 	cellBounds.w = TILE_WIDTH;
 	cellBounds.h = TILE_HEIGHT;
 
@@ -187,10 +187,10 @@ void PathFinding::getWorldCoord(int mapX, int mapY, float& outX, float& outY) {
 
 Tile* PathFinding::getFloorTileForWorldCoord(float x, float y) {
 	for (Tile* tile : game->gameLayer->floorTiles) {
-		float left = tile->x - tile->width / 2;
-		float right = tile->x + tile->width / 2;
-		float top = tile->y - tile->height / 2;
-		float bottom = tile->y + tile->height / 2;
+		float left = tile->x - tile->width / 2.0f;
+		float right = tile->x + tile->width / 2.0f;
+		float top = tile->y - tile->height / 2.0f;
+		float bottom = tile->y + tile->height / 2.0f;
 
 		if (x >= left && x < right && y >= top && y < bottom) {
 			return tile;

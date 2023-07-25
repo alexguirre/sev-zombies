@@ -18,6 +18,12 @@ Zombie::Zombie(float x, float y, Game* game)
 	damageRedFlashTime = 0;
 
 	dynamicActorCollidesWith = 0; // no colisiona con nada para evitar que se quede atascado con los muros al moverse, el pathfinding evita que atraviese los muros
+
+	vxIntelligence = 0.0f;
+	vyIntelligence = 0.0f;
+	debugTargetXIntelligence = 0.0f;
+	debugTargetYIntelligence = 0.0f;
+	targetWindow = nullptr;
 }
 
 void Zombie::update() {
@@ -149,7 +155,7 @@ void Zombie::draw(float scrollX, float scrollY) {
 		SDL_RenderDrawLine(game->renderer, x - scrollX, y - scrollY, x - scrollX + vxIntelligence * 10.0f, y - scrollY + vyIntelligence * 10.0f);
 	
 
-		SDL_Rect targetBox;
+		SDL_Rect targetBox{};
 		targetBox.x = debugTargetXIntelligence - scrollX - 8;
 		targetBox.y = debugTargetYIntelligence - scrollY - 8;
 		targetBox.w = 16;

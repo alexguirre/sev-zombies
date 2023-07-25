@@ -1,9 +1,9 @@
 #pragma once
 #include <iostream>
-#include <string> 
+#include <string>
 using namespace std;
 
-#include <SDL.h>;
+#include <SDL.h>
 #include <SDL_mixer.h> // libreria de audio
 
 class Audio

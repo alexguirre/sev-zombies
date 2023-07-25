@@ -7,6 +7,7 @@ MenuLayer::MenuLayer(Game* game)
 }
 
 void MenuLayer::init() {
+	controlStart = false,
 	background = new Actor("res/hud/menu_background.png", WIDTH * 0.5f, HEIGHT * 0.5f, 1280, 720, game);
 	button = new Actor("res/hud/button_play.png", WIDTH * 0.225f, HEIGHT * 0.325f, 232, 72, game);
 }
