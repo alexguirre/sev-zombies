@@ -29,7 +29,7 @@ void GameLayer::init() {
 	deadText = new Text("HAS MUERTO", WIDTH * 0.5f, HEIGHT * 0.325f, game);
 	deadText->font = game->fontBig;
 	deadText->color = { 180, 0, 0, 255 };
-	deadScoreText = new Text("PUNTUACIÓN: 0", WIDTH * 0.5f, HEIGHT * 0.4f, game);
+	deadScoreText = new Text("PUNTUACIï¿½N: 0", WIDTH * 0.5f, HEIGHT * 0.4f, game);
 	deadRecordText = new Text("RECORD: 0", WIDTH * 0.5f, HEIGHT * 0.48f, game);
 
 	score = 0;
@@ -89,7 +89,7 @@ void GameLayer::processControls() {
 			init();
 			controlDeadRestart = false;
 		}
-		return; // no procesar más controles de juego si el jugador murió
+		return; // no procesar mï¿½s controles de juego si el jugador muriï¿½
 	}
 
 	if (controlPause) {
@@ -177,7 +177,7 @@ void GameLayer::processControls() {
 		}
 
 		if (!doorOpened) {
-			// si no abrió ninguna puerta, intentar comprar un arma
+			// si no abriï¿½ ninguna puerta, intentar comprar un arma
 			for (auto weaponLocation : weaponLocations) {
 				if (score >= weaponLocation->price && weaponLocation->isActorInBuyRange(player)) {
 					weaponLocation->buy(player);
@@ -257,7 +257,7 @@ void GameLayer::update() {
 		window->update();
 
 		if (window->barrierHealth < WINDOW_BARRIER_MAX_HEALTH && window->isActorInRebuildBarrierRange(player)) {
-			showHelpText("Mantén [E] para reparar la barrera");
+			showHelpText("Mantï¿½n [E] para reparar la barrera");
 		}
 	}
 
@@ -290,11 +290,11 @@ void GameLayer::update() {
 
 	if (!dead) {
 		dead = player->health <= 0;
-		if (dead) { // el jugador acaba de morir, prepara la pantalla de muerte y actualiza la puntuación record
+		if (dead) { // el jugador acaba de morir, prepara la pantalla de muerte y actualiza la puntuaciï¿½n record
 			if (score > scoreRecord)
 				scoreRecord = score;
 
-			deadScoreText->content = "PUNTUACIÓN: " + to_string(score);
+			deadScoreText->content = "PUNTUACIï¿½N: " + to_string(score);
 			deadRecordText->content = "RECORD: " + to_string(scoreRecord);
 
 			createBloodSplatter(player->x, player->y);
@@ -340,7 +340,7 @@ void GameLayer::calculateScroll() {
 	}
 
 	if (cameraShakeTime > 1) {
-		float shakeAngle = (rand() / (float)RAND_MAX) * 2.0f * M_PI; // un ángulo aleatorio en radianes
+		float shakeAngle = (rand() / (float)RAND_MAX) * 2.0f * M_PI; // un ï¿½ngulo aleatorio en radianes
 		float shakeX = cos(shakeAngle) * cameraShakeRadius;
 		float shakeY = sin(shakeAngle) * cameraShakeRadius;
 		cameraShakeRadius -= 3.0f;
@@ -565,15 +565,20 @@ void GameLayer::loadMap(const string& name) {
 	else {
 		vector<string> map;
 		for (int i = 0; getline(streamFile, line); i++) {
+			// make sure no \r or \n appears in the string, on Windows getline reads until \r\n but on other
+			// systems (Unix, Emscripten) only until \n is found which keeps \r in the string
+			line.erase(remove(line.begin(), line.end(), '\r'), line.end());
+			line.erase(remove(line.begin(), line.end(), '\n'), line.end());
+
 			mapWidth = line.length() * TILE_WIDTH; // Ancho del mapa en pixels
 			map.push_back(line);
 		}
 		mapHeight = map.size() * TILE_HEIGHT;
 
-		// Por línea
+		// Por lÃ­nea
 		for (int i = 0; i < map.size(); i++) {
 			const string& row = map[i];
-			// Por carácter (en cada línea)
+			// Por carÃ¡cter (en cada lÃ­nea)
 			for (int j = 0; j < row.size(); j++) {
 				character = row[j]; // Leer character
 				loadMapObject(character, j, i, map);
