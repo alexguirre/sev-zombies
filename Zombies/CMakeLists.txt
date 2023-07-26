@@ -70,3 +70,9 @@ target_link_libraries(sev-zombies
 target_link_libraries(sev-zombies PRIVATE $<IF:$<TARGET_EXISTS:SDL2_image::SDL2_image>,SDL2_image::SDL2_image,SDL2_image::SDL2_image-static>)
 target_link_libraries(sev-zombies PRIVATE $<IF:$<TARGET_EXISTS:SDL2_mixer::SDL2_mixer>,SDL2_mixer::SDL2_mixer,SDL2_mixer::SDL2_mixer-static>)
 target_link_libraries(sev-zombies PRIVATE $<IF:$<TARGET_EXISTS:SDL2_ttf::SDL2_ttf>,SDL2_ttf::SDL2_ttf,SDL2_ttf::SDL2_ttf-static>)
+
+if(EMSCRIPTEN)
+    set_target_properties(sev-zombies PROPERTIES SUFFIX ".html")
+    target_link_options(sev-zombies PRIVATE --preload-file ${CMAKE_CURRENT_SOURCE_DIR}/res@/res)
+    target_link_options(sev-zombies PRIVATE -sINITIAL_MEMORY=67108864)
+endif()

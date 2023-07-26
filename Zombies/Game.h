@@ -25,6 +25,7 @@ public:
 	Game();
 	void scale();
 	void loop();
+	void update();
 	SDL_Texture* getTexture(string filename);
 	Audio* getAudio(string filename, bool loop);
 

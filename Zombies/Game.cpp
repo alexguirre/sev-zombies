@@ -3,6 +3,16 @@
 #include "MenuLayer.h"
 #include "Audio.h"
 
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+
+
+static void updateEmscripten(void* arg) {
+	Game* game = (Game*)arg;
+	game->update();
+}
+#endif
+
 Game::Game() {
 	if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
 		cout << "Error SDL_Init" << SDL_GetError() << endl;
@@ -11,7 +21,7 @@ Game::Game() {
 		cout << "Error Window y Renderer" << SDL_GetError() << endl;
 	}
 	SDL_SetWindowTitle(window, "Zombies");
-	// Escalado de imágenes de calidad 
+	// Escalado de imï¿½genes de calidad 
 	// https://wiki.libsdl.org/SDL_HINT_RENDER_SCALE_QUALITY
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
 	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
@@ -28,7 +38,13 @@ Game::Game() {
 	layer = menuLayer;
 
 	loopActive = true; // bucle activo
+#ifdef __EMSCRIPTEN__
+	cout << "EMSCRIPTEN" << endl;
+	emscripten_set_main_loop_arg(&updateEmscripten, this, 30, 1);
+#else
+	cout << "NATIVE" << endl;
 	loop();
+#endif
 }
 
 
@@ -39,13 +55,7 @@ void Game::loop() {
 	while (loopActive) {
 		initTick = SDL_GetTicks();
 
-		// Controles
-		layer->processControls();
-		// Actualizar elementos
-		layer->update();
-		// Dibujar
-		layer->draw();
-
+		update();
 
 		endTick = SDL_GetTicks();
 		differenceTick = endTick - initTick;
@@ -54,6 +64,15 @@ void Game::loop() {
 			SDL_Delay((1000 / 30) - differenceTick);
 		}
 	}
+}
+
+void Game::update() {
+	// Controles
+	layer->processControls();
+	// Actualizar elementos
+	layer->update();
+	// Dibujar
+	layer->draw();
 }
 
 void Game::scale() {
