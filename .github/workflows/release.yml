@@ -1,0 +1,108 @@
+name: Release
+on:
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup vcpkg
+        run: |
+          git clone https://github.com/Microsoft/vcpkg.git
+          .\vcpkg\bootstrap-vcpkg.bat
+
+      - name: Install dependencies
+        run: |
+          .\vcpkg\vcpkg install --triplet=x64-windows-static sdl2 sdl2-ttf sdl2-mixer sdl2-image
+
+      - name: Configure
+        run: |
+          mkdir build
+          cd build
+          cmake ../Zombies/ -DCMAKE_TOOLCHAIN_FILE="../vcpkg/scripts/buildsystems/vcpkg.cmake" -DVCPKG_TARGET_TRIPLET=x64-windows-static
+
+      - name: Build
+        run: |
+          cd build
+          cmake --build . --config Release
+          cmake --install . --config Release
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: sev-zombies-x64-windows
+          path: build/dist/
+
+  build-emscripten:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      # ccache seems to be causing emcc to fail to compile sdl2
+      # not sure which chocolatey package includes it (ccache package is not installed)
+      - name: Uninstall ccache
+        run: |
+          rm C:\ProgramData\chocolatey\bin\ccache.exe
+
+      - name: Setup emsdk
+        run: |
+          git clone https://github.com/emscripten-core/emsdk.git
+          cd emsdk
+          .\emsdk install 3.1.43
+          .\emsdk activate 3.1.43
+          .\emsdk_env.ps1
+          emcc -v
+
+      - name: Setup vcpkg
+        run: |
+          git clone https://github.com/Microsoft/vcpkg.git
+          .\vcpkg\bootstrap-vcpkg.bat
+
+      - name: Install dependencies
+        run: |
+          .\emsdk\emsdk_env.ps1
+          .\vcpkg\vcpkg install --triplet=wasm32-emscripten sdl2 sdl2-ttf sdl2-mixer sdl2-image
+
+      - name: Configure
+        run: |
+          .\emsdk\emsdk_env.ps1
+          mkdir build-em
+          cd build-em
+          emcmake cmake ../Zombies/ -DCMAKE_TOOLCHAIN_FILE="../vcpkg/scripts/buildsystems/vcpkg.cmake" -DVCPKG_TARGET_TRIPLET=wasm32-emscripten -DVCPKG_CHAINLOAD_TOOLCHAIN_FILE="%EMSDK%/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake"
+
+      - name: Build
+        run: |
+          .\emsdk\emsdk_env.ps1
+          cd build-em
+          cmake --build . --config Release
+          cmake --install . --config Release
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: sev-zombies-wasm32-emscripten
+          path: build-em/dist/
+
+  create-release:
+    runs-on: windows-latest
+    needs: [build-windows, build-emscripten]
+    permissions:
+      contents: write
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v3
+
+      - name: Compress Artifacts
+        run: |
+          7z a -r sev-zombies-x64-windows.zip sev-zombies-x64-windows\
+          7z a -r sev-zombies-wasm32-emscripten.zip sev-zombies-wasm32-emscripten\
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            sev-zombies-x64-windows.zip
+            sev-zombies-wasm32-emscripten.zip
+          tag_name: ${{ format('{0}#{1}', github.sha, github.run_number) }}

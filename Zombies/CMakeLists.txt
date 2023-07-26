@@ -76,3 +76,16 @@ if(EMSCRIPTEN)
     target_link_options(sev-zombies PRIVATE --preload-file ${CMAKE_CURRENT_SOURCE_DIR}/res@/res)
     target_link_options(sev-zombies PRIVATE -sINITIAL_MEMORY=67108864)
 endif()
+
+
+if(EMSCRIPTEN)
+    install(TARGETS sev-zombies DESTINATION ${CMAKE_BINARY_DIR}/dist)
+    install(FILES
+        "$<TARGET_FILE_DIR:sev-zombies>/sev-zombies.js"
+        "$<TARGET_FILE_DIR:sev-zombies>/sev-zombies.wasm"
+        "$<TARGET_FILE_DIR:sev-zombies>/sev-zombies.data"
+        DESTINATION ${CMAKE_BINARY_DIR}/dist)
+else()
+    install(TARGETS sev-zombies DESTINATION ${CMAKE_BINARY_DIR}/dist)
+    install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/res DESTINATION ${CMAKE_BINARY_DIR}/dist)
+endif()
