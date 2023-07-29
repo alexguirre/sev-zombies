@@ -1,6 +1,8 @@
 #include "MenuLayer.h"
 #include "GameLayer.h"
 
+constexpr bool SkipMenu = true;
+
 MenuLayer::MenuLayer(Game* game)
 	: Layer(game) {
 	init();
@@ -28,7 +30,7 @@ void MenuLayer::processControls() {
 	}
 
 	//procesar controles, solo tiene uno
-	if (controlStart) {
+	if (controlStart || SkipMenu) {
 		// Cambia la capa
 		SDL_ShowCursor(0);
 		game->layer = game->gameLayer;
@@ -55,7 +57,7 @@ void MenuLayer::keysToControls(SDL_Event event) {
 }
 
 void MenuLayer::mouseToControls(SDL_Event event) {
-	// Modificación de coordenadas por posible escalado
+	// Modificaciï¿½n de coordenadas por posible escalado
 	float motionX = event.motion.x / game->scaleLower;
 	float motionY = event.motion.y / game->scaleLower;
 
