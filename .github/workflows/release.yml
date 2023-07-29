@@ -29,6 +29,11 @@ jobs:
           cmake --build . --config Release
           cmake --install . --config Release
 
+      - name: Copy LICENSE and NOTICE
+        run: |
+          cp LICENSE.md build/dist/
+          cp NOTICE.md build/dist/
+
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
@@ -78,6 +83,11 @@ jobs:
           cd build-em
           cmake --build . --config Release
           cmake --install . --config Release
+
+      - name: Copy LICENSE and NOTICE
+        run: |
+          cp LICENSE.md build-em/dist/
+          cp NOTICE.md build-em/dist/
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
